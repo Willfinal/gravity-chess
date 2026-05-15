@@ -232,7 +232,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
         }
     }
 
-    // 无条件绘制胜利白环
+    // 绘制胜利白环
     // 只要产生了胜利棋子，就要一直画出来，直到被清空
     for (const QPoint& pt : winningPieces) {
         int c = pt.x();
@@ -244,7 +244,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
         painter.drawPixmap(drawX, drawY, pixWhiteRing);
     }
 
-    // --- 粒子和冲击波生成逻辑 ---
+    // 粒子和冲击波生成
     // 检查是否游戏结束且胜利棋子存在，同时没有任何粒子或冲击波在活动时才生成
     if (!winningPieces.isEmpty() && gameOver && !hasSpawnedEffects && allParticles.empty() && activeShockwaves.empty()) {
         hasSpawnedEffects = true; // 标记特效已生成
@@ -253,7 +253,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
             int r = winPos.y();
             int pieceX = 61 + c * 89;
             int pieceY = (227 + 5 * 89) - (r * 89);
-            spawnParticlesAt(pieceX, pieceY); // 这会同时生成粒子和冲击波
+            spawnParticlesAt(pieceX, pieceY); // 同时生成粒子和冲击波
         }
     }
 
@@ -265,7 +265,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
         // 1. 更新粒子状态
         p.x += p.vx;
         p.y += p.vy;
-        p.life -= 0.001; // 假设 60 FPS，1秒减少 1.0 生命值
+        p.life -= 0.001;
 
         // 2. 检查粒子是否存活
         if (p.life <= 0.0) {
@@ -275,7 +275,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
         stillAlive = true; // 至少有一个粒子还活着
 
-        // 3. 计算粒子颜色和大小 (保持不变)
+        // 3. 计算粒子颜色和大小
         double alphaFactor = p.life / p.initialLife; // 计算当前透明度因子
         int alpha = static_cast<int>(alphaFactor * 255); // 转换为 0-255 的 alpha 值
         double brightness = pow(alphaFactor, 9);
@@ -287,7 +287,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
         if (alpha < 0) alpha = 0; // 确保 alpha 不小于 0
         QColor particleColor(r, g, b, alpha);
 
-        // 4. 绘制粒子 (保持不变)
+        // 4. 绘制粒子
         painter.setBrush(particleColor);
         painter.setPen(Qt::NoPen); // 无边框
         double size = 2 * cbrt(p.life); // 粒子大小随生命值变化
@@ -296,7 +296,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
         ++it; // 移动到下一个粒子
     }
 
-    // --- 绘制和更新冲击波动画（包含闪光） ---
+    // 绘制和更新冲击波动画（包含闪光）
     bool anyShockwaveOrGlowStillActive = false; // 合并标志
     for (auto it = activeShockwaves.begin(); it != activeShockwaves.end();) {
         ShockwaveInfo& sw = *it;
@@ -308,7 +308,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
         int elapsed = sw.startTime.msecsTo(QTime::currentTime());
         bool stillActiveThisFrame = false; // 标记当前这个冲击波/闪光实例是否仍在活动
 
-        // --- 更新和绘制冲击波 ---
+        // 更新和绘制冲击波
         if (elapsed < sw.shockwaveDurationMs) { // 冲击波动画持续时间
             painter.setRenderHint(QPainter::Antialiasing);
 
@@ -326,7 +326,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
             stillActiveThisFrame = true; // 冲击波还在活动
         }
 
-        // --- 更新和绘制中心闪光 ---
+        // 绘制中心闪光
         if (sw.glowEnabled && elapsed < sw.glowDurationMs) { // 闪光持续时间
             painter.setRenderHint(QPainter::Antialiasing);
 
@@ -358,8 +358,6 @@ void MainWindow::paintEvent(QPaintEvent *event)
         }
     }
 
-    // 统一的更新调用：只要有粒子、冲击波或闪光在活动，就刷新
-    // 修改：变量名更改为 anyShockwaveOrGlowStillActive
     if (stillAlive || anyShockwaveOrGlowStillActive) {
         update();
     }
@@ -477,7 +475,7 @@ void MainWindow::checkWin()
             }
 
             // 检查 "/" 型 (左上)
-            // 注意：这里检查的是向左上方延伸
+            // 这里检查的是向左上方延伸
             // c >= 3 (左边有3列), r <= 2 (上面有3行)
             if (c >= 3 && r <= 2) {
                 if (boardPieces[c-1][r+1] == color &&
@@ -557,7 +555,7 @@ void MainWindow::spawnParticlesAt(int centerX, int centerY) {
         allParticles.append(p);
     }
 
-    // 【新增】添加新的冲击波
+    // 添加新的冲击波
     ShockwaveInfo newShockwave;
     newShockwave.centerX = centerX;
     newShockwave.centerY = centerY;

@@ -38,8 +38,8 @@ else()
     endif()
 endif()
 
-# 5. 链接库 (修改点：统一使用变量，并把 Multimedia 加在这里)
-# 删除了重复的链接行，合并为一行
+# 5. 链接库
+
 target_link_libraries(GravityChess PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Multimedia)
 
 # 6. 设置属性

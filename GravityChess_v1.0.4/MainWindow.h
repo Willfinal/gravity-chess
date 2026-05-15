@@ -34,41 +34,37 @@ private slots:
     void on_muteButton_clicked();
 
 private:
-    // --- 基础 UI 和 音效 ---
+    // 基础 UI 和 音效
     Ui::MainWindow *ui;
     QSoundEffect *moveSoundEffect;
     bool isMuted;
     int lastVolume;
 
-    // --- 棋盘常量与坐标 ---
+    // 棋盘常量与坐标
     const int ROWS = 6;
     const int COLS = 7;
     QPoint m_boardPoints[7]; // 存储每一列的中心点坐标 (x, y)
     int m_pieceRadius;       // 棋子半径
 
-    // --- 游戏状态变量 ---
+    // 游戏状态变量
     bool gameStarted;        // 游戏是否开始
     bool gameOver;           // 标记游戏是否已结束
     bool isYellowTurn;       // 是否轮到黄棋
     int boardState[7];       // 记录每列当前的落子高度 (-1 到 5)
     int boardPieces[7][6];   // 记录每个位置的颜色：0=空, 1=黄, 2=蓝
 
-    // --- 交互变量 ---
+    // 交互变量
     int hoverCol;            // 鼠标当前悬停的列号 (-1为无)
 
-    // --- 历史记录 (用于撤回) ---
+    // 历史记录 (用于撤回)
     struct Move { int col; int row; };
     QVector<Move> moveHistory;
 
-    // --- 胜利判定相关 ---
+    // 胜利判定相关
     void checkWin();
     QVector<QPoint> winningPieces;
 
-    // ==========================================
-    // ===      粒子系统 (新代码 - 整理版)     ===
-    // ==========================================
-
-    // 1. 定义粒子结构体 (放在 private 内部是可以的，或者放在类外面)
+    // 1. 定义粒子结构体
     struct Particle {
         double x, y;          // 位置
         double vx, vy;        // 速度
@@ -77,7 +73,7 @@ private:
     };
 
     // 2. 成员变量
-    QVector<Particle> allParticles;             // 存储粒子的容器 (注意类型变了)
+    QVector<Particle> allParticles;             // 存储粒子的容器
     std::mt19937 rng;                           // 随机数引擎
     std::uniform_real_distribution<double> distAngle; // 角度分布 [0, 2*PI)
     std::uniform_real_distribution<double> distSpeed; //速度大小随机分布
@@ -88,9 +84,6 @@ private:
     // 3. 函数声明
     void spawnParticlesAt(int centerX, int centerY); // 生成粒子
 
-    // ==========================================
-    // ===         事件重写与辅助函数          ===
-    // ==========================================
     void mouseMoveEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
@@ -98,22 +91,22 @@ private:
 
 
 
-    // --- 冲击波 & 闪光效果专用 ---
+    // 冲击波和闪光效果
     struct ShockwaveInfo {
         double centerX;
         double centerY;
         QTime startTime;
         bool isActive;
 
-        // --- 冲击波参数 ---
+        // 冲击波参数
         double shockwaveMaxRadius = 50.0;  // 冲击波最大半径
         double shockwaveInitialWidth = 5.0; // 冲击波初始宽度
         int shockwaveDurationMs = 1000;    // 冲击波动画持续时间 (毫秒)
 
-        // --- 闪光参数 ---
-        bool glowEnabled = true;           // 是否启用中心闪光 (可根据需要开关)
+        // 闪光参数
+        bool glowEnabled = true;           // 是否启用中心闪光（开关）
         double glowMaxRadius = 32.0;      // 闪光最大半径
-        double glowDurationMs = 300.0;    // 闪光持续时间 (毫秒)，通常比冲击波短
+        double glowDurationMs = 300.0;    // 闪光持续时间 (毫秒)
     };
 
     std::vector<ShockwaveInfo> activeShockwaves; // 存储所有活跃的冲击波
